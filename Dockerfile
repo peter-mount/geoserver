@@ -11,7 +11,7 @@ COPY docker-entrypoint.sh /
 WORKDIR /opt
 RUN echo Retrieving geoserver $GEOSERVER_VERSION &&\
     curl -s -o /tmp/geoserver.zip \
-    	 https://d2n6o1jfdmw4z0.cloudfront.net/tools/geoserver/geoserver-${GEOSERVER_VERSION}-bin.zip &&\
+    	 https://cdn.area51.onl/tools/geoserver/geoserver-${GEOSERVER_VERSION}-bin.zip &&\
     \
     echo Installing &&\
     unzip -q /tmp/geoserver.zip &&\
