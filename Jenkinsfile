@@ -10,11 +10,11 @@ properties( [
   ])
 ])
 
-# Latest (Stable) is first, LTS is second then any versions we want to keep
-# supporting with updates.
-#
-# Note: 2.12.0 is here as that's what is running on map.lu
-#
+// Latest (Stable) is first, LTS is second then any versions we want to keep
+// supporting with updates.
+//
+// Note: 2.12.0 is here as that's what is running on map.lu
+//
 versions = [ '2.13.0', '2.12.3', '2.12.0' ]
 
 def build = {
