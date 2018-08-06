@@ -4,7 +4,7 @@ FROM area51/java:serverjre-8 AS base
 ARG GEOSERVER_VERSION
 MAINTAINER Peter Mount <peter@retep.org>
 
-ENV  PLUGINS	        netcdf-plugin netcdf-out-plugin grib-plugin
+ENV  PLUGINS	        netcdf-plugin netcdf-out-plugin grib-plugin wps-plugin
 
 ENV  GEOSERVER_HOME	/opt/geoserver
 
