@@ -1,34 +1,45 @@
 ARG GEOSERVER_VERSION
 
-FROM area51/java:serverjre-8
+FROM area51/java:serverjre-8 AS base
 ARG GEOSERVER_VERSION
 MAINTAINER Peter Mount <peter@retep.org>
 
-#ENV  GEOSERVER_VERSION	2.12.0
+ENV  PLUGINS	        netcdf-plugin netcdf-out-plugin grib-plugin
+
+ENV  GEOSERVER_HOME	/opt/geoserver
+
+COPY index.html /tmp
+
+WORKDIR /opt
+RUN (for i in bin $PLUGINS; do \
+      echo Retrieving $i $GEOSERVER_VERSION &&\
+      curl -s -o /tmp/geoserver-${i}.zip \
+    	 https://cdn.area51.onl/tools/geoserver/geoserver-${GEOSERVER_VERSION}-${i}.zip || die 'failed' ;\
+    done )
+
+RUN echo Installing &&\
+    unzip -q /tmp/geoserver-bin.zip &&\
+    rm -f /tmp/geoserver.zip &&\
+    mv geoserver-$GEOSERVER_VERSION $GEOSERVER_HOME &&\
+    echo Configuring root &&\
+    mkdir -p $GEOSERVER_HOME/webapps/ROOT &&\
+    mv /tmp/index.html $GEOSERVER_HOME/webapps/ROOT
+
+RUN cd $GEOSERVER_HOME/webapps/geoserver/WEB-INF/lib &&\
+    (for i in $PLUGINS;do echo "Installing $i";unzip -q -o /tmp/geoserver-${i}.zip;done)
+
+FROM area51/java:serverjre-8
+
 ENV  GEOSERVER_HOME	/opt/geoserver
 ENV  GEOSERVER_DATA_DIR	/opt/data
 
-COPY index.html /tmp
-COPY docker-entrypoint.sh /
-
-WORKDIR /opt
-RUN echo Retrieving geoserver $GEOSERVER_VERSION &&\
-    curl -s -o /tmp/geoserver.zip \
-    	 https://cdn.area51.onl/tools/geoserver/geoserver-${GEOSERVER_VERSION}-bin.zip &&\
-    \
-    echo Installing &&\
-    unzip -q /tmp/geoserver.zip &&\
-    rm -f /tmp/geoserver.zip &&\
-    mv geoserver-$GEOSERVER_VERSION $GEOSERVER_HOME &&\
-    \
-    echo Configuring root &&\
-    mkdir -p $GEOSERVER_HOME/webapps/ROOT &&\
-    mv /tmp/index.html $GEOSERVER_HOME/webapps/ROOT &&\
-    \
-    mkdir -p $GEOSERVER_DATA_DIR &&\
-    chmod +x /docker-entrypoint.sh
-
 WORKDIR $GEOSERVER_HOME/bin
-VOLUME	$GEOSERVER_DATA_DIR
+#VOLUME	$GEOSERVER_DATA_DIR
+
+COPY docker-entrypoint.sh /
+COPY --from=base $GEOSERVER_HOME $GEOSERVER_HOME
+
+RUN mkdir -p $GEOSERVER_DATA_DIR &&\
+    chmod +x /docker-entrypoint.sh
 
 CMD ["/docker-entrypoint.sh"]
