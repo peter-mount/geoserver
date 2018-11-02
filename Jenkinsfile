@@ -1,3 +1,5 @@
+// Refer to the non master branches. This is an interim build before we start
+// work on Java 11
 imageName = 'area51/geoserver'
 
 properties( [
@@ -15,12 +17,12 @@ properties( [
 //
 // Note: 2.12.0 is here as that's what is running on map.lu
 //
-versions = [ '2.14.0', '2.13.2', '2.12.4', '2.12.0' ]
+versions = [ '2.14.0' ]
 
 def build = {
-  version -> stage( version ) {
-    sh 'docker build -t ' + imageName + ':' + version + ' --build-arg GEOSERVER_VERSION=' + version + ' .'
-    sh 'docker push ' + imageName + ':' + version
+  version, tag -> stage( version ) {
+    sh 'docker build -t ' + imageName + ':' + tag + ' --build-arg GEOSERVER_VERSION=' + version + ' .'
+    sh 'docker push ' + imageName + ':' + tag
   }
 }
 
@@ -37,8 +39,8 @@ node( 'AMD64' ) {
     sh 'docker pull area51/java:serverjre-8'
   }
 
-  versions.each { version -> build( version ) }
-  publish( versions[0], 'latest' )
-  publish( versions[1], 'lts' )
+  versions.each { version -> build( version, 'master' ) }
+  //publish( versions[0], 'latest' )
+  //publish( versions[1], 'lts' )
 
 }
