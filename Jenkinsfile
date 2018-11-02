@@ -39,6 +39,6 @@ node( 'AMD64' ) {
 
   versions.each { version -> build( version ) }
   publish( versions[0], 'latest' )
-  publish( versions[1], 'lts' )
+  //publish( versions[1], 'lts' )
 
 }
