@@ -15,7 +15,7 @@ properties( [
 //
 // Note: 2.12.0 is here as that's what is running on map.lu
 //
-versions = [ '2.13.2', '2.12.4', '2.12.0' ]
+versions = [ '2.14.0', '2.13.2', '2.12.4', '2.12.0' ]
 
 def build = {
   version -> stage( version ) {
