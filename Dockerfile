@@ -4,7 +4,7 @@ FROM area51/java:serverjre-8 AS base
 ARG GEOSERVER_VERSION
 MAINTAINER Peter Mount <peter@retep.org>
 
-ENV  PLUGINS	        netcdf-plugin netcdf-out-plugin grib-plugin wps-plugin imagemosaic-jdbc-plugin
+ENV  PLUGINS	        netcdf-plugin netcdf-out-plugin grib-plugin wps-plugin imagemosaic-jdbc-plugin css-plugin
 
 ENV  GEOSERVER_HOME	/opt/geoserver
 
@@ -19,9 +19,12 @@ RUN (for i in bin $PLUGINS; do \
 
 RUN echo Installing &&\
     unzip -q /tmp/geoserver-bin.zip &&\
-    rm -f /tmp/geoserver.zip &&\
-    mv geoserver-$GEOSERVER_VERSION $GEOSERVER_HOME &&\
-    echo Configuring root &&\
+    rm -f /tmp/geoserver.zip
+
+RUN echo Moving geoserver-$GEOSERVER_VERSION to $GEOSERVER_HOME &&\
+    mv geoserver-$GEOSERVER_VERSION $GEOSERVER_HOME
+
+RUN echo Configuring root &&\
     mkdir -p $GEOSERVER_HOME/webapps/ROOT &&\
     mv /tmp/index.html $GEOSERVER_HOME/webapps/ROOT
 
